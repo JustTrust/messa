@@ -1,6 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:background="@color/gray">
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/login_get_started_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/login_get_started"
+        android:gravity="center"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_right"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
+        app:layout_constraintBottom_toTopOf="@+id/google_login_bt"
+        android:layout_marginBottom="16dp"
+        android:textSize="20sp"/>
+
+    <Button
+        android:id="@+id/google_login_bt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/google_login_text"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_right"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/fb_login_bt"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:background="@color/google_color"/>
+
+    <Button
+        android:id="@+id/fb_login_bt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/fb_login_text"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_right"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline_center"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        tools:layout_editor_absoluteY="0dp"
+        android:background="@color/fb_color"/>
+
+    <Button
+        android:id="@+id/email_login_bt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/email_login_text"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_right"
+        app:layout_constraintTop_toBottomOf="@+id/fb_login_bt"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        android:background="@color/email_color"/>
+
+    <TextView
+        android:id="@+id/login_terms_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/login_terms_text"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_right"
+        app:layout_constraintTop_toBottomOf="@+id/email_login_bt"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
+        android:layout_marginTop="16dp"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1"/>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline_center"
+        app:layout_constraintGuide_percent="0.5"
+        android:orientation="horizontal"/>
+
+</android.support.constraint.ConstraintLayout>

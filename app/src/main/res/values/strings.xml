@@ -10,4 +10,9 @@
     <string name="empty_ribots">There aren\'t any ribots</string>
     <string name="error_loading_ribots">There was a problem loading the ribots</string>
     <string name="cancel_text">Cancel</string>
+    <string name="login_get_started">Let\'s get started...</string>
+    <string name="google_login_text">Connect with Google</string>
+    <string name="fb_login_text">Connect with Facebook</string>
+    <string name="email_login_text">Connect with Email</string>
+    <string name="login_terms_text"><![CDATA[I agree to the terms & conditions and privacy policy]]></string>
 </resources>

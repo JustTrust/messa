@@ -18,8 +18,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String EXTRA_TRIGGER_SYNC_FLAG =
-            "com.belichenko.a.messa.ui.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
+    private static final String EXTRA_TRIGGER_SYNC_FLAG = "MainActivity.EXTERNAL_SYNC_FLAG";
 
     @Inject MessageAdapter mMessageAdapter;
 
