@@ -22,5 +22,17 @@ android {
 }
 
 dependencies {
+    final RETROFIT_VERSION = '2.1.0'
+
+    compile "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    compile "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+    compile "com.squareup.retrofit2:adapter-rxjava:$RETROFIT_VERSION"
+
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+
+    compile ("com.squareup.sqlbrite:sqlbrite:1.1.1") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

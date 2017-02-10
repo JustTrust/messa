@@ -10,11 +10,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.belichenko.a.messa.MessaApplication;
-import com.belichenko.a.messa.injection.module.FragmentModule;
-import com.belichenko.a.messa.util.Consts;
-
 import com.belichenko.a.messa.injection.component.DaggerFragmentComponent;
 import com.belichenko.a.messa.injection.component.FragmentComponent;
+import com.belichenko.a.messa.injection.module.FragmentModule;
+import com.belichenko.a.messa.util.Consts;
 
 
 public abstract class BaseFragment extends Fragment {

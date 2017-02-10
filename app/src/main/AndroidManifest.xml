@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-    package="com.belichenko.a.messa" >
+          package="com.belichenko.a.messa">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name="com.belichenko.a.messa.MessaApplication"
@@ -13,13 +13,14 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+        <activity android:name=".ui.activitys.MainActivity"/>
         <activity
-            android:name="com.belichenko.a.messa.ui.activitys.MainActivity"
-            android:label="@string/app_name" >
+            android:name="com.belichenko.a.messa.ui.activitys.StartActivity"
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -29,7 +30,7 @@
             android:name="com.belichenko.a.messa.data.SyncService$SyncOnConnectionAvailable"
             android:enabled="false">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
 

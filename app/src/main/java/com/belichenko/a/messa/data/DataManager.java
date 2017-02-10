@@ -3,7 +3,7 @@ package com.belichenko.a.messa.data;
 import com.belichenko.a.messa.data.local.DatabaseHelper;
 import com.belichenko.a.messa.data.local.PreferencesHelper;
 import com.belichenko.a.messa.data.model.Ribot;
-import com.belichenko.a.messa.data.remote.RibotsService;
+import com.belichenko.a.messa.data.remote.HTTPService;
 
 import java.util.List;
 
@@ -16,14 +16,14 @@ import rx.functions.Func1;
 @Singleton
 public class DataManager {
 
-    private final RibotsService mRibotsService;
+    private final HTTPService mHTTPService;
     private final DatabaseHelper mDatabaseHelper;
     private final PreferencesHelper mPreferencesHelper;
 
     @Inject
-    public DataManager(RibotsService ribotsService, PreferencesHelper preferencesHelper,
+    public DataManager(HTTPService HTTPService, PreferencesHelper preferencesHelper,
                        DatabaseHelper databaseHelper) {
-        mRibotsService = ribotsService;
+        mHTTPService = HTTPService;
         mPreferencesHelper = preferencesHelper;
         mDatabaseHelper = databaseHelper;
     }
@@ -33,7 +33,7 @@ public class DataManager {
     }
 
     public Observable<Ribot> syncRibots() {
-        return mRibotsService.getRibots()
+        return mHTTPService.getRibots()
                 .concatMap(new Func1<List<Ribot>, Observable<Ribot>>() {
                     @Override
                     public Observable<Ribot> call(List<Ribot> ribots) {

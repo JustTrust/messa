@@ -5,31 +5,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.List;
+import com.belichenko.a.messa.R;
+import com.belichenko.a.messa.data.SyncService;
+import com.belichenko.a.messa.ui.adapters.MessageAdapter;
+import com.belichenko.a.messa.ui.base.BaseActivity;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.belichenko.a.messa.R;
-import com.belichenko.a.messa.data.SyncService;
-import com.belichenko.a.messa.data.model.Ribot;
-import com.belichenko.a.messa.ui.adapters.RibotsAdapter;
-import com.belichenko.a.messa.ui.base.BaseActivity;
-import com.belichenko.a.messa.ui.mvp.mvp_viev.MainMvpView;
-import com.belichenko.a.messa.ui.mvp.presenters.MainPresenter;
-import com.belichenko.a.messa.util.DialogFactory;
 
-public class MainActivity extends BaseActivity implements MainMvpView {
+public class MainActivity extends BaseActivity {
 
     private static final String EXTRA_TRIGGER_SYNC_FLAG =
             "com.belichenko.a.messa.ui.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
 
-    @Inject MainPresenter mMainPresenter;
-    @Inject RibotsAdapter mRibotsAdapter;
+    @Inject MessageAdapter mMessageAdapter;
 
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
@@ -47,14 +39,11 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mRecyclerView.setAdapter(mRibotsAdapter);
+        mRecyclerView.setAdapter(mMessageAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mMainPresenter.attachView(this);
-        mMainPresenter.loadRibots();
 
         if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
             startService(SyncService.getStartIntent(this));
@@ -65,28 +54,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     protected void onDestroy() {
         super.onDestroy();
 
-        mMainPresenter.detachView();
-    }
-
-    /***** MVP View methods implementation *****/
-
-    @Override
-    public void showRibots(List<Ribot> ribots) {
-        mRibotsAdapter.setRibots(ribots);
-        mRibotsAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void showError() {
-        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_ribots))
-                .show();
-    }
-
-    @Override
-    public void showRibotsEmpty() {
-        mRibotsAdapter.setRibots(Collections.<Ribot>emptyList());
-        mRibotsAdapter.notifyDataSetChanged();
-        Toast.makeText(this, R.string.empty_ribots, Toast.LENGTH_LONG).show();
     }
 
 }

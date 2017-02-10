@@ -3,7 +3,7 @@ package com.belichenko.a.messa.injection.module;
 import android.app.Application;
 import android.content.Context;
 
-import com.belichenko.a.messa.data.remote.RibotsService;
+import com.belichenko.a.messa.data.remote.HTTPService;
 import com.belichenko.a.messa.injection.ApplicationContext;
 
 import javax.inject.Singleton;
@@ -35,8 +35,8 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    RibotsService provideRibotsService() {
-        return RibotsService.Creator.newRibotsService();
+    HTTPService provideRibotsService() {
+        return HTTPService.Creator.newRibotsService();
     }
 
 }

@@ -17,12 +17,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RibotsAdapter extends RecyclerView.Adapter<RibotsAdapter.RibotViewHolder> {
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.RibotViewHolder> {
 
     private List<Ribot> mRibots;
 
     @Inject
-    public RibotsAdapter() {
+    public MessageAdapter() {
         mRibots = new ArrayList<>();
     }
 
