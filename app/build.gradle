@@ -133,6 +133,7 @@ dependencies {
     provided 'org.glassfish:javax.annotation:10.0-b28' //Required by Dagger2
     annotationProcessor daggerCompiler
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
+
 }
 
 

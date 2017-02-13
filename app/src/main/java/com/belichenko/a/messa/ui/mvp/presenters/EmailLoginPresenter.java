@@ -2,24 +2,24 @@ package com.belichenko.a.messa.ui.mvp.presenters;
 
 import com.belichenko.a.messa.data.DataManager;
 import com.belichenko.a.messa.ui.base.BasePresenter;
-import com.belichenko.a.messa.ui.mvp.mvp_viev.ChooseLoginMvpView;
+import com.belichenko.a.messa.ui.mvp.mvp_viev.EmailLoginMvpView;
 
 import javax.inject.Inject;
 
 import rx.Subscription;
 
-public class ChooseLoginPresenter extends BasePresenter<ChooseLoginMvpView> {
+public class EmailLoginPresenter extends BasePresenter<EmailLoginMvpView> {
 
     private final DataManager mDataManager;
     private Subscription mSubscription;
 
     @Inject
-    public ChooseLoginPresenter(DataManager dataManager) {
+    public EmailLoginPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
     @Override
-    public void attachView(ChooseLoginMvpView mvpView) {
+    public void attachView(EmailLoginMvpView mvpView) {
         super.attachView(mvpView);
     }
 
@@ -29,9 +29,4 @@ public class ChooseLoginPresenter extends BasePresenter<ChooseLoginMvpView> {
         if (mSubscription != null) mSubscription.unsubscribe();
     }
 
-    public void emailLogin() {
-        if (isViewAttached()) {
-            getMvpView().goToEmailLogin();
-        }
-    }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.belichenko.a.messa.R;
 import com.belichenko.a.messa.ui.base.BaseFragment;
@@ -49,7 +50,7 @@ public class ChooseLoginMethodFragment extends BaseFragment implements ChooseLog
 
     @Override
     public String getName() {
-        return null;
+        return getClass().getSimpleName();
     }
 
     @Override
@@ -61,13 +62,21 @@ public class ChooseLoginMethodFragment extends BaseFragment implements ChooseLog
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.google_login_bt:
+                Toast.makeText(getContext(), getString(R.string.use_email_login_text), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.fb_login_bt:
+                Toast.makeText(getContext(), getString(R.string.use_email_login_text), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.email_login_bt:
+                mPresenter.emailLogin();
                 break;
             case R.id.login_terms_tv:
                 break;
         }
+    }
+
+    @Override
+    public void goToEmailLogin() {
+        new EmailLoginFragment().show(getFragmentManager());
     }
 }

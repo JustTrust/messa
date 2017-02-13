@@ -15,4 +15,9 @@
     <string name="fb_login_text">Connect with Facebook</string>
     <string name="email_login_text">Connect with Email</string>
     <string name="login_terms_text"><![CDATA[I agree to the terms & conditions and privacy policy]]></string>
+    <string name="use_email_login_text">Use a email login for now</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_pass_hint">Password</string>
+    <string name="login_greeting_text">Happy to see you again!</string>
+    <string name="login_singing_text">Sing in</string>
 </resources>
