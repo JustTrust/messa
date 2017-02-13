@@ -39,9 +39,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:textSize="16sp"
         android:gravity="center"
         android:text="@string/login_greeting_text"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/login_email_et"
         app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
         app:layout_constraintRight_toLeftOf="@+id/guideline_right"/>
@@ -69,14 +69,13 @@
         app:layout_constraintTop_toTopOf="@+id/guideline_center"/>
 
     <Button
-        android:id="@+id/login_singing"
+        android:id="@+id/login_login"
         android:layout_width="253dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:text="@string/login_singing_text"
+        android:text="@string/login_login_text"
         app:layout_constraintLeft_toLeftOf="@+id/guideline_left"
         app:layout_constraintRight_toLeftOf="@+id/guideline_right"
         app:layout_constraintTop_toBottomOf="@+id/login_pass_et"/>
-
 
 </android.support.constraint.ConstraintLayout>

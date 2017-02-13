@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Messa</string>
+    <string name="app_name">MessA</string>
 
     <string name="action_settings">Settings</string>
 
@@ -10,6 +10,7 @@
     <string name="empty_ribots">There aren\'t any ribots</string>
     <string name="error_loading_ribots">There was a problem loading the ribots</string>
     <string name="cancel_text">Cancel</string>
+
     <string name="login_get_started">Let\'s get started...</string>
     <string name="google_login_text">Connect with Google</string>
     <string name="fb_login_text">Connect with Facebook</string>
@@ -19,5 +20,6 @@
     <string name="login_email_hint">Email</string>
     <string name="login_pass_hint">Password</string>
     <string name="login_greeting_text">Happy to see you again!</string>
-    <string name="login_singing_text">Sing in</string>
+    <string name="login_login_text">Login</string>
+    <string name="offline_message">Seems you offline or disconnected</string>
 </resources>

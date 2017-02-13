@@ -7,6 +7,7 @@ import com.belichenko.a.messa.injection.component.ApplicationComponent;
 import com.belichenko.a.messa.injection.component.DaggerApplicationComponent;
 import com.belichenko.a.messa.injection.module.ApplicationModule;
 import com.belichenko.a.messaga.MessagaClient;
+import com.belichenko.a.messaga.listeners.OnSuccessErrorListener;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 
@@ -15,7 +16,7 @@ import timber.log.Timber;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 
-public class MessaApplication extends Application implements MessagaClient.ConnectionListener {
+public class MessaApplication extends Application {
 
     ApplicationComponent mApplicationComponent;
 
@@ -43,7 +44,18 @@ public class MessaApplication extends Application implements MessagaClient.Conne
 
         MessagaClient.INSTANCE.register(this);
 
-        MessagaClient.INSTANCE.registerConnectionListener(this);
+        MessagaClient.INSTANCE.registerConnectionListener(new OnSuccessErrorListener() {
+            @Override
+            public void onSuccess() {
+                Timber.d("onSuccess: Connected successful");
+            }
+
+            @Override
+            public void onError(String error) {
+                Timber.d("onError: error = [%s]", error);
+            }
+        });
+
         MessagaClient.INSTANCE.connect();
 
     }
@@ -66,13 +78,4 @@ public class MessaApplication extends Application implements MessagaClient.Conne
         mApplicationComponent = applicationComponent;
     }
 
-    @Override
-    public void onSuccess() {
-
-    }
-
-    @Override
-    public void onError(String error) {
-
-    }
 }

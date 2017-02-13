@@ -2,6 +2,17 @@ package com.belichenko.a.messaga;
 
 import android.content.Context;
 
+import com.belichenko.a.messaga.listeners.OnMessageListener;
+import com.belichenko.a.messaga.listeners.OnSuccessErrorListener;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 import timber.log.Timber;
 
 /**
@@ -15,9 +26,11 @@ public enum MessagaClient {
 
     private boolean mConnected;
     private boolean mRegister;
-    private ConnectionListener mConnectionListener;
-    private AuthenticationListener mAuthenticationListener;
-
+    private Context mContext;
+    private WebSocket mWebSocket;
+    private OnSuccessErrorListener mConnectionListener;
+    private OnSuccessErrorListener mAuthenticationListener;
+    private OnMessageListener mOnMessageListener;
 
     public boolean isRegistered() {
         return mRegister;
@@ -42,6 +55,7 @@ public enum MessagaClient {
                     }
                 });
             }
+            mContext = context;
             mRegister = true;
             Timber.d("register successful");
         }
@@ -55,11 +69,7 @@ public enum MessagaClient {
                     mConnectionListener.onError("connect: already connected");
                 }
             } else {
-                mConnected = true;
-                Timber.d("connected successful");
-                if (mConnectionListener != null) {
-                    mConnectionListener.onSuccess();
-                }
+                openSocket();
             }
         } else {
             mConnected = false;
@@ -70,25 +80,79 @@ public enum MessagaClient {
         }
     }
 
-    public void registerConnectionListener(ConnectionListener connectionListener) {
+    public void registerConnectionListener(OnSuccessErrorListener connectionListener) {
         mConnectionListener = connectionListener;
     }
 
-    public void registerAuthenticationListener(AuthenticationListener authenticationListener) {
+    public void registerAuthenticationListener(OnSuccessErrorListener authenticationListener) {
         mAuthenticationListener = authenticationListener;
     }
 
-    public interface ConnectionListener {
-        void onSuccess();
-
-        void onError(String error);
+    public void registerOnMessageListener(OnMessageListener onMessgeListener) {
+        mOnMessageListener = onMessgeListener;
     }
 
-    public interface AuthenticationListener {
-        void onSuccess();
+    public void openSocket() {
 
-        void onError(String error);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(1000, TimeUnit.MILLISECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("ws://echo.websocket.org")
+                .build();
+        client.newWebSocket(request, new SocketListener());
+
+        client.dispatcher().executorService().shutdown();
     }
 
+    public void sendMessage(String text) {
+        if (isRegistered() && isConnected()) {
+            mWebSocket.send(text);
+        }
+    }
+
+    class SocketListener extends WebSocketListener {
+        @Override
+        public void onOpen(WebSocket webSocket, Response response) {
+            MessagaClient.this.mConnected = true;
+            MessagaClient.this.mWebSocket = webSocket;
+            if (mConnectionListener != null) {
+                mConnectionListener.onSuccess();
+            }
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            if (mOnMessageListener != null) {
+                mOnMessageListener.onMessage(text);
+            }
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, ByteString bytes) {
+            super.onMessage(webSocket, bytes);
+        }
+
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            MessagaClient.this.mConnected = false;
+        }
+
+        @Override
+        public void onClosed(WebSocket webSocket, int code, String reason) {
+            MessagaClient.this.mConnected = false;
+            MessagaClient.this.mWebSocket = null;
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            if (mConnectionListener != null) {
+                mConnectionListener.onError(t.getMessage());
+            }
+            MessagaClient.this.mConnected = false;
+            MessagaClient.this.mWebSocket = null;
+        }
+    }
 
 }
