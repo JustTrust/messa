@@ -40,6 +40,10 @@ public enum MessagaClient {
         return mConnected;
     }
 
+    public Context getContext(){
+        return mContext;
+    }
+
     public void register(Context context) {
         if (context == null) {
             mRegister = false;
@@ -56,6 +60,7 @@ public enum MessagaClient {
                 });
             }
             mContext = context;
+
             mRegister = true;
             Timber.d("register successful");
         }
