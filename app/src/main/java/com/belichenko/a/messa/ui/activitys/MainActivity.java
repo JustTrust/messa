@@ -3,35 +3,32 @@ package com.belichenko.a.messa.ui.activitys;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.widget.FrameLayout;
 
 import com.belichenko.a.messa.R;
-import com.belichenko.a.messa.data.SyncService;
-import com.belichenko.a.messa.ui.adapters.MessageAdapter;
 import com.belichenko.a.messa.ui.base.BaseActivity;
-
-import javax.inject.Inject;
+import com.belichenko.a.messa.ui.fragments.chat.UserListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String EXTRA_TRIGGER_SYNC_FLAG = "MainActivity.EXTERNAL_SYNC_FLAG";
+    private static final String MAIN_START_FLAG = "MainActivity.activity_start_flag";
+    public static final int USER_LIST_FLAG = 1;
+    public static final int MESSAGE_LIST_FLAG = 2;
 
-    @Inject MessageAdapter mMessageAdapter;
+    @BindView(R.id.main_container) FrameLayout mMainContainer;
 
-    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
-
-    /**
-     * Return an Intent to start this Activity.
-     * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
-     * only be set to false during testing.
-     */
-    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
+    public static Intent getUserListIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
+        intent.putExtra(MAIN_START_FLAG, USER_LIST_FLAG);
+        return intent;
+    }
+
+    public static Intent getMessageListIntent(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(MAIN_START_FLAG, MESSAGE_LIST_FLAG);
         return intent;
     }
 
@@ -41,18 +38,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mRecyclerView.setAdapter(mMessageAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-            startService(SyncService.getStartIntent(this));
+        if (getIntent().getIntExtra(MAIN_START_FLAG, USER_LIST_FLAG) == USER_LIST_FLAG) {
+            new UserListFragment().show(getSupportFragmentManager());
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
 
 }

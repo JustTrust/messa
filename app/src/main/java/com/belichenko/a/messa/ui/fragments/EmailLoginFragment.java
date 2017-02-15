@@ -7,14 +7,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.belichenko.a.messa.R;
+import com.belichenko.a.messa.ui.activitys.MainActivity;
 import com.belichenko.a.messa.ui.base.BaseFragment;
 import com.belichenko.a.messa.ui.mvp.mvp_viev.EmailLoginMvpView;
 import com.belichenko.a.messa.ui.mvp.presenters.EmailLoginPresenter;
-import com.belichenko.a.messaga.MessagaClient;
-import com.belichenko.a.messaga.listeners.OnMessageListener;
 
 import javax.inject.Inject;
 
@@ -27,7 +25,7 @@ import butterknife.OnClick;
  * mailto: a.belichenko@gmail.com
  */
 
-public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpView, OnMessageListener {
+public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpView {
 
     @Inject EmailLoginPresenter mPresenter;
     @BindView(R.id.login_greeting) TextView mLoginGreeting;
@@ -51,18 +49,6 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        MessagaClient.INSTANCE.registerOnMessageListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MessagaClient.INSTANCE.registerOnMessageListener(null);
-    }
-
-    @Override
     public String getName() {
         return getClass().getSimpleName();
     }
@@ -74,20 +60,12 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
 
     @OnClick(R.id.login_login)
     public void onClick() {
-        if (MessagaClient.INSTANCE.isConnected()){
-            mPresenter.login(mLoginEmailEt.getText().toString());
-        }else{
-            Toast.makeText(getContext(), R.string.offline_message, Toast.LENGTH_SHORT).show();
-        }
+        mPresenter.login(mLoginEmailEt.getText().toString(), mLoginPassEt.getText().toString());
     }
 
     @Override
-    public void onMessage(final String message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
+    public void login() {
+        getActivity().startActivity(MainActivity.getUserListIntent(getContext()));
+        getActivity().finish();
     }
 }
