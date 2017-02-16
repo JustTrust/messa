@@ -22,4 +22,5 @@
     <string name="login_greeting_text">Happy to see you again!</string>
     <string name="login_login_text">Login</string>
     <string name="offline_message">Seems you offline or disconnected</string>
+    <string name="new_message_hint">Type new message here...</string>
 </resources>

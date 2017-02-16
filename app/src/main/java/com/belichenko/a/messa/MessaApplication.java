@@ -7,9 +7,13 @@ import com.belichenko.a.messa.injection.component.ApplicationComponent;
 import com.belichenko.a.messa.injection.component.DaggerApplicationComponent;
 import com.belichenko.a.messa.injection.module.ApplicationModule;
 import com.belichenko.a.messaga.MessagaClient;
+import com.belichenko.a.messaga.data.models.MessageEvent;
 import com.belichenko.a.messaga.listeners.OnSuccessErrorListener;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
@@ -42,9 +46,9 @@ public class MessaApplication extends Application {
                 .build()
         );
 
-        MessagaClient.INSTANCE.register(this);
-
-        MessagaClient.INSTANCE.registerConnectionListener(new OnSuccessErrorListener() {
+        MessagaClient.getInstance().register(this);
+        MessagaClient.getInstance().getEventBus().register(this);
+        MessagaClient.getInstance().registerConnectionListener(new OnSuccessErrorListener() {
             @Override
             public void onSuccess() {
                 Timber.d("onSuccess: Connected successful");
@@ -56,8 +60,13 @@ public class MessaApplication extends Application {
             }
         });
 
-        MessagaClient.INSTANCE.connect();
+        MessagaClient.getInstance().connect();
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Timber.d("onMessageEvent: event = [%s]", event);
     }
 
     public static MessaApplication get(Context context) {

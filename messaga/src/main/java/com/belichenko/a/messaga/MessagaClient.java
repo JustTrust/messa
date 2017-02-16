@@ -1,9 +1,13 @@
 package com.belichenko.a.messaga;
 
+import android.app.Application;
 import android.content.Context;
 
+import com.belichenko.a.messaga.data.models.MessageEvent;
 import com.belichenko.a.messaga.listeners.OnMessageListener;
 import com.belichenko.a.messaga.listeners.OnSuccessErrorListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,17 +24,27 @@ import timber.log.Timber;
  * mailto: a.belichenko@gmail.com
  */
 
-public enum MessagaClient {
+public class MessagaClient implements BackgroundManager.Listener {
 
-    INSTANCE;
+    private static MessagaClient sInstance;
 
     private boolean mConnected;
     private boolean mRegister;
     private Context mContext;
+    private BackgroundManager mBackgroundManager;
     private WebSocket mWebSocket;
     private OnSuccessErrorListener mConnectionListener;
     private OnSuccessErrorListener mAuthenticationListener;
     private OnMessageListener mOnMessageListener;
+
+    public static MessagaClient getInstance() {
+        if (sInstance == null) {
+            sInstance = new MessagaClient();
+        }
+        return sInstance;
+    }
+
+    private MessagaClient() {}
 
     public boolean isRegistered() {
         return mRegister;
@@ -40,14 +54,21 @@ public enum MessagaClient {
         return mConnected;
     }
 
-    public Context getContext(){
+    public Context getContext() {
         return mContext;
+    }
+
+    public EventBus getEventBus(){
+        return EventBus.getDefault();
     }
 
     public void register(Context context) {
         if (context == null) {
             mRegister = false;
             Timber.d("register: context = null");
+        } else if (!(context instanceof Application)) {
+            mRegister = false;
+            Timber.d("register: context != Application ");
         } else {
             if (BuildConfig.DEBUG) {
                 Timber.plant(new Timber.DebugTree() {
@@ -60,8 +81,9 @@ public enum MessagaClient {
                 });
             }
             mContext = context;
-
             mRegister = true;
+            mBackgroundManager = BackgroundManager.getInstance((Application) mContext);
+            mBackgroundManager.registerListener(this);
             Timber.d("register successful");
         }
     }
@@ -117,6 +139,20 @@ public enum MessagaClient {
         }
     }
 
+    @Override
+    public void onBecameForeground() {
+        if (mWebSocket != null && !isConnected()) {
+            connect();
+        }
+    }
+
+    @Override
+    public void onBecameBackground() {
+        if (mWebSocket != null && isConnected()) {
+            mWebSocket.close(0, "App became background");
+        }
+    }
+
     class SocketListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
@@ -125,13 +161,12 @@ public enum MessagaClient {
             if (mConnectionListener != null) {
                 mConnectionListener.onSuccess();
             }
+            EventBus.getDefault().post(new MessageEvent("open", response.message()));
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            if (mOnMessageListener != null) {
-                mOnMessageListener.onMessage(text);
-            }
+            EventBus.getDefault().post(new MessageEvent("msg", text));
         }
 
         @Override
@@ -142,6 +177,7 @@ public enum MessagaClient {
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
             MessagaClient.this.mConnected = false;
+            EventBus.getDefault().post(new MessageEvent("close", reason));
         }
 
         @Override

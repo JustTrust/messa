@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.belichenko.a.messa.ui.adapters.MessageAdapter;
 import com.belichenko.a.messa.ui.base.BaseFragment;
 import com.belichenko.a.messa.ui.mvp.mvp_viev.MessageListMvpView;
 import com.belichenko.a.messa.ui.mvp.presenters.MessageListPresenter;
+import com.belichenko.a.messa.util.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.MissingFormatArgumentException;
@@ -37,6 +39,8 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
     @BindView(R.id.message_list_rv) RecyclerView mUserListRv;
     @BindView(R.id.message_user_image) ImageView mMessageUserImage;
     @BindView(R.id.message_user_name) TextView mMessageUserName;
+    @BindView(R.id.new_message_et) EditText mNewMessageEt;
+    @BindView(R.id.message_send_iv) ImageView mMessageSendIv;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,13 +84,24 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
         return R.id.main_container;
     }
 
-    @OnClick({R.id.message_user_image, R.id.message_user_name})
+    @OnClick({R.id.message_user_image, R.id.message_user_name, R.id.message_send_iv})
     public void onClick(View view) {
+        if (!isClickAllowed()) return;
         switch (view.getId()) {
             case R.id.message_user_image:
                 break;
             case R.id.message_user_name:
                 break;
+            case R.id.message_send_iv:
+                sendMessage();
+                break;
         }
+    }
+
+    private void sendMessage() {
+        if (mNewMessageEt.getText().length() >0)
+        mPresenter.sendMessage(mNewMessageEt.getText().toString());
+        mNewMessageEt.setText("");
+        ViewUtil.hideKeyboard(getActivity());
     }
 }

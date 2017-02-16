@@ -29,4 +29,7 @@ public class MessageListPresenter extends BasePresenter<MessageListMvpView> {
         if (mSubscription != null) mSubscription.unsubscribe();
     }
 
+    public void sendMessage(String s) {
+
+    }
 }

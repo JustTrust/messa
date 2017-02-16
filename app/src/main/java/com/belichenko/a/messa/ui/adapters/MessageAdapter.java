@@ -51,8 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return mMessage.size();
     }
 
-
-    class MessageViewHolder extends RecyclerView.ViewHolder{
+    class MessageViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.message_image) ImageView mMessageImage;
         @BindView(R.id.message_text) TextView mMessageText;
         @BindView(R.id.message_root_view) CardView mMessageRootView;

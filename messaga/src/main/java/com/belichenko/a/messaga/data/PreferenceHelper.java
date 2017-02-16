@@ -14,7 +14,7 @@ public enum PreferenceHelper {
 
     INSTANCE;
 
-    private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MessagaClient.INSTANCE.getContext());
+    private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MessagaClient.getInstance().getContext());
 
     public void addEmail(String email){
         sp.edit().putString("email_key", email).apply();

@@ -16,7 +16,7 @@ public enum DatabaseHelper {
     INSTANCE;
 
     private final SqlBrite sqlBrite = new SqlBrite.Builder().build();
-    private final BriteDatabase mDataBase = sqlBrite.wrapDatabaseHelper(new DbOpenHelper(MessagaClient.INSTANCE.getContext()), Schedulers.io());
+    private final BriteDatabase mDataBase = sqlBrite.wrapDatabaseHelper(new DbOpenHelper(MessagaClient.getInstance().getContext()), Schedulers.io());
 
     public void addMessage(String message){
         mDataBase.execute(message);
