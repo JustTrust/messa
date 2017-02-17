@@ -2,9 +2,11 @@ package com.belichenko.a.messa.ui.fragments.chat;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +17,11 @@ import com.belichenko.a.messa.ui.base.BaseFragment;
 import com.belichenko.a.messa.ui.mvp.mvp_viev.MessageListMvpView;
 import com.belichenko.a.messa.ui.mvp.presenters.MessageListPresenter;
 import com.belichenko.a.messa.util.ViewUtil;
+import com.belichenko.a.messaga.data.models.MessageEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.MissingFormatArgumentException;
@@ -24,6 +31,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * Created by Belichenko Anton on 14.02.17.
@@ -33,6 +41,7 @@ import butterknife.OnClick;
 public class MessageListFragment extends BaseFragment implements MessageListMvpView {
 
     public static final String USER_NAME_KEY = "MessageListFragment.user_name";
+    ArrayList<String> mList = new ArrayList<>();
 
     @Inject MessageAdapter mMessageAdapter;
     @Inject MessageListPresenter mPresenter;
@@ -61,17 +70,33 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
         }
         mMessageUserName.setText(name);
         mUserListRv.setAdapter(mMessageAdapter);
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Admin");
-        list.add("Albert");
-        list.add("Admiral");
-        list.add("Suliman");
-        list.add("Western");
-        list.add("Solid");
-        list.add("Upper");
-        list.add("Dortmund");
-        list.add("Welcome");
-        mMessageAdapter.setUsers(list);
+        mList.add("Hi");
+        mList.add("how are you?");
+
+        mMessageAdapter.setUsers(mList);
+
+        mNewMessageEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    sendMessage();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -99,9 +124,24 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
     }
 
     private void sendMessage() {
-        if (mNewMessageEt.getText().length() >0)
-        mPresenter.sendMessage(mNewMessageEt.getText().toString());
-        mNewMessageEt.setText("");
-        ViewUtil.hideKeyboard(getActivity());
+        if (mNewMessageEt.getText().length() > 0) {
+            mPresenter.sendMessage(mNewMessageEt.getText().toString());
+            mNewMessageEt.setText("");
+            ViewUtil.hideKeyboard(getActivity());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if (event != null) {
+            addNewMessage(event.getMessageText());
+        }
+        Timber.d("onMessageEvent: event = [%s]", event);
+    }
+
+    @Override
+    public void addNewMessage(String messageText) {
+        mList.add(messageText);
+        mMessageAdapter.notifyItemInserted(mList.size());
     }
 }

@@ -43,7 +43,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public void onBindViewHolder(final MessageViewHolder holder, int position) {
         String text = mMessage.get(position);
         holder.mMessageImage.setBackgroundColor(Color.LTGRAY);
-        holder.mMessageText.setText(String.format("%s \n %s", text, text));
+        holder.mMessageText.setText(String.format("%s", text));
     }
 
     @Override

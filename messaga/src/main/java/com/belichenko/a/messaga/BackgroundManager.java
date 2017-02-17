@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by Belichenko Anton on 16.02.17.
@@ -16,9 +17,7 @@ import java.util.List;
 
 public class BackgroundManager implements Application.ActivityLifecycleCallbacks {
 
-    private static final String LOG = BackgroundManager.class.getSimpleName();
-
-    static final long BACKGROUND_DELAY = 500;
+    private static final long BACKGROUND_DELAY = 500;
 
     private static BackgroundManager sInstance;
 
@@ -28,7 +27,7 @@ public class BackgroundManager implements Application.ActivityLifecycleCallbacks
     }
 
     private boolean mInBackground = true;
-    private final List<Listener> listeners = new ArrayList<Listener>();
+    private final List<Listener> listeners = new ArrayList<>();
     private final Handler mBackgroundDelayHandler = new Handler();
     private Runnable mBackgroundTransition;
 
@@ -65,7 +64,7 @@ public class BackgroundManager implements Application.ActivityLifecycleCallbacks
         if (mInBackground) {
             mInBackground = false;
             notifyOnBecameForeground();
-            Log.i(LOG, "Application went to foreground");
+            Timber.d("Application went to foreground");
         }
     }
 
@@ -74,7 +73,7 @@ public class BackgroundManager implements Application.ActivityLifecycleCallbacks
             try {
                 listener.onBecameForeground();
             } catch (Exception e) {
-                Log.e(LOG, "Listener threw exception!" + e);
+                Timber.d("Listener threw exception! %s", e);
             }
         }
     }
@@ -88,7 +87,7 @@ public class BackgroundManager implements Application.ActivityLifecycleCallbacks
                     mInBackground = true;
                     mBackgroundTransition = null;
                     notifyOnBecameBackground();
-                    Log.i(LOG, "Application went to background");
+                    Timber.d("Application went to background");
                 }
             };
             mBackgroundDelayHandler.postDelayed(mBackgroundTransition, BACKGROUND_DELAY);
@@ -100,7 +99,7 @@ public class BackgroundManager implements Application.ActivityLifecycleCallbacks
             try {
                 listener.onBecameBackground();
             } catch (Exception e) {
-                Log.e(LOG, "Listener threw exception!" + e);
+                Timber.d("Listener threw exception! %s", e);
             }
         }
     }

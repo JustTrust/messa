@@ -70,6 +70,9 @@
         android:hint="@string/new_message_hint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:imeOptions="actionSend"
+        android:maxLines="1"
+        android:singleLine="true"
         app:layout_constraintRight_toLeftOf="@+id/message_send_iv"/>
 
     <ImageView

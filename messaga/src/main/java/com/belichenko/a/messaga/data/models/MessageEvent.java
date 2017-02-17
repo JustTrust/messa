@@ -14,6 +14,14 @@ public class MessageEvent {
         this.messageText = messageText;
     }
 
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
+
     @Override
     public String toString() {
         return String.format("msg type = %s, msg = %s", messageType, messageText);

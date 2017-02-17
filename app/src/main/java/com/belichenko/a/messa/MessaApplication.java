@@ -7,13 +7,10 @@ import com.belichenko.a.messa.injection.component.ApplicationComponent;
 import com.belichenko.a.messa.injection.component.DaggerApplicationComponent;
 import com.belichenko.a.messa.injection.module.ApplicationModule;
 import com.belichenko.a.messaga.MessagaClient;
-import com.belichenko.a.messaga.data.models.MessageEvent;
-import com.belichenko.a.messaga.listeners.OnSuccessErrorListener;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import java.lang.ref.WeakReference;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
@@ -46,27 +43,7 @@ public class MessaApplication extends Application {
                 .build()
         );
 
-        MessagaClient.getInstance().register(this);
-        MessagaClient.getInstance().getEventBus().register(this);
-        MessagaClient.getInstance().registerConnectionListener(new OnSuccessErrorListener() {
-            @Override
-            public void onSuccess() {
-                Timber.d("onSuccess: Connected successful");
-            }
-
-            @Override
-            public void onError(String error) {
-                Timber.d("onError: error = [%s]", error);
-            }
-        });
-
-        MessagaClient.getInstance().connect();
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        Timber.d("onMessageEvent: event = [%s]", event);
+        MessagaClient.getInstance().register(new WeakReference<Context>(this));
     }
 
     public static MessaApplication get(Context context) {
