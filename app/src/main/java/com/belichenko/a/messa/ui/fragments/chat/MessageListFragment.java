@@ -17,11 +17,8 @@ import com.belichenko.a.messa.ui.base.BaseFragment;
 import com.belichenko.a.messa.ui.mvp.mvp_viev.MessageListMvpView;
 import com.belichenko.a.messa.ui.mvp.presenters.MessageListPresenter;
 import com.belichenko.a.messa.util.ViewUtil;
-import com.belichenko.a.messaga.data.models.MessageEvent;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.belichenko.a.messaga.MessagePublish;
+import com.belichenko.a.messaga.data.models.ChatMessage;
 
 import java.util.ArrayList;
 import java.util.MissingFormatArgumentException;
@@ -31,6 +28,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 /**
@@ -38,10 +38,12 @@ import timber.log.Timber;
  * mailto: a.belichenko@gmail.com
  */
 
-public class MessageListFragment extends BaseFragment implements MessageListMvpView {
+public class MessageListFragment extends BaseFragment implements MessageListMvpView{
 
     public static final String USER_NAME_KEY = "MessageListFragment.user_name";
     ArrayList<String> mList = new ArrayList<>();
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+
 
     @Inject MessageAdapter mMessageAdapter;
     @Inject MessageListPresenter mPresenter;
@@ -90,13 +92,32 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        compositeSubscription.add(MessagePublish.getInstance().getMessage()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Timber.d("onNext: s = [%s]", s);
+                        addNewMessage(s);
+                    }
+                })
+        );
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        compositeSubscription.unsubscribe();
     }
 
     @Override
@@ -125,22 +146,14 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
 
     private void sendMessage() {
         if (mNewMessageEt.getText().length() > 0) {
-            mPresenter.sendMessage(mNewMessageEt.getText().toString());
+            mPresenter.sendMessage(new ChatMessage(mNewMessageEt.getText().toString()));
             mNewMessageEt.setText("");
             ViewUtil.hideKeyboard(getActivity());
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        if (event != null) {
-            addNewMessage(event.getMessageText());
-        }
-        Timber.d("onMessageEvent: event = [%s]", event);
-    }
-
-    @Override
     public void addNewMessage(String messageText) {
+        Timber.d("addNewMessage: messageText = [%s]", messageText);
         mList.add(messageText);
         mMessageAdapter.notifyItemInserted(mList.size());
     }

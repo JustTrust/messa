@@ -4,6 +4,7 @@ import com.belichenko.a.messa.data.DataManager;
 import com.belichenko.a.messa.ui.base.BasePresenter;
 import com.belichenko.a.messa.ui.mvp.mvp_viev.MessageListMvpView;
 import com.belichenko.a.messaga.Send;
+import com.belichenko.a.messaga.data.models.ChatMessage;
 
 import javax.inject.Inject;
 
@@ -30,7 +31,7 @@ public class MessageListPresenter extends BasePresenter<MessageListMvpView> {
         if (mSubscription != null) mSubscription.unsubscribe();
     }
 
-    public void sendMessage(String s) {
+    public void sendMessage(ChatMessage s) {
         Send.getInstance().message(s);
     }
 }

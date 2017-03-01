@@ -1,9 +1,5 @@
 package com.belichenko.a.messaga;
 
-import com.belichenko.a.messaga.data.models.MessageEvent;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -65,13 +61,12 @@ public class MsgWebSocket extends WebSocketListener {
     public void onOpen(WebSocket webSocket, Response response) {
         mConnected = true;
         mWebSocket = webSocket;
-        EventBus.getDefault().post(new MessageEvent("open", response.message()));
         Timber.d("onOpen: webSocket = [%s], response = [%s]", webSocket, response.message());
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        EventBus.getDefault().post(new MessageEvent("msg", text));
+        MessagePublish.getInstance().setMessage(text);
         Timber.d("onMessage: webSocket = [%s], text = [%s]", webSocket, text);
     }
 
@@ -84,7 +79,6 @@ public class MsgWebSocket extends WebSocketListener {
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
         mConnected = false;
-        EventBus.getDefault().post(new MessageEvent("close", reason));
         Timber.d("onClosing: webSocket = [%s], code = [%s], reason = [%s]", webSocket, code, reason);
     }
 
@@ -99,6 +93,7 @@ public class MsgWebSocket extends WebSocketListener {
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         mConnected = false;
         mWebSocket = null;
+        MessagePublish.getInstance().setError(t, response);
         Timber.d("onFailure: webSocket = [%s], t = [%s], response = [%s]", webSocket, t, response);
         connect();
     }

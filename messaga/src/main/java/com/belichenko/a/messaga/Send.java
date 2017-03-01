@@ -2,6 +2,8 @@ package com.belichenko.a.messaga;
 
 import android.location.Location;
 
+import com.belichenko.a.messaga.data.models.ChatMessage;
+
 /**
  * Created by Belichenko Anton on 17.02.17.
  * mailto: a.belichenko@gmail.com
@@ -19,8 +21,8 @@ public class Send {
     private Send() {
     }
 
-    public void message(String msg) {
-        MsgWebSocket.getInstance().sendMessage(msg);
+    public void message(ChatMessage msg) {
+        MsgWebSocket.getInstance().sendMessage(Utils.toGson(msg));
     }
 
     public void picture(String url){

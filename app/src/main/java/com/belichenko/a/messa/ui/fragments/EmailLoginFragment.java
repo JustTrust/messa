@@ -13,12 +13,16 @@ import com.belichenko.a.messa.ui.activitys.MainActivity;
 import com.belichenko.a.messa.ui.base.BaseFragment;
 import com.belichenko.a.messa.ui.mvp.mvp_viev.EmailLoginMvpView;
 import com.belichenko.a.messa.ui.mvp.presenters.EmailLoginPresenter;
+import com.jakewharton.rxbinding.widget.RxTextView;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func2;
 
 /**
  * Created by Belichenko Anton on 13.02.17.
@@ -46,6 +50,8 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         mPresenter.attachView(this);
+        mLoginSinging.setEnabled(false);
+        loginAdnPassword();
     }
 
     @Override
@@ -67,5 +73,22 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
     public void login() {
         getActivity().startActivity(MainActivity.getUserListIntent(getContext()));
         getActivity().finish();
+    }
+
+    public void loginAdnPassword() {
+        Observable.combineLatest(RxTextView.textChanges(mLoginEmailEt),
+                RxTextView.textChanges(mLoginPassEt),
+                new Func2<CharSequence, CharSequence, Boolean>() {
+                    @Override
+                    public Boolean call(CharSequence email, CharSequence password) {
+                        return email.length() > 0 && password.length() > 0;
+                    }
+                }).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean enable) {
+                mLoginSinging.setEnabled(enable);
+
+            }
+        });
     }
 }
