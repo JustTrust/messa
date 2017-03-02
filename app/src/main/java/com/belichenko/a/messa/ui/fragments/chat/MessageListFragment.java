@@ -19,9 +19,10 @@ import com.belichenko.a.messa.ui.mvp.presenters.MessageListPresenter;
 import com.belichenko.a.messa.util.ViewUtil;
 import com.belichenko.a.messaga.MessagePublish;
 import com.belichenko.a.messaga.data.models.ChatMessage;
+import com.jakewharton.rxbinding.widget.RxTextView;
 
 import java.util.ArrayList;
-import java.util.MissingFormatArgumentException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
@@ -38,11 +41,11 @@ import timber.log.Timber;
  * mailto: a.belichenko@gmail.com
  */
 
-public class MessageListFragment extends BaseFragment implements MessageListMvpView{
+public class MessageListFragment extends BaseFragment implements MessageListMvpView {
 
     public static final String USER_NAME_KEY = "MessageListFragment.user_name";
     ArrayList<String> mList = new ArrayList<>();
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+    private CompositeSubscription compositeSubscription;
 
 
     @Inject MessageAdapter mMessageAdapter;
@@ -68,7 +71,8 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
         mPresenter.attachView(this);
         String name = getArguments().getString(USER_NAME_KEY);
         if (name == null) {
-            throw new MissingFormatArgumentException("User not define.");
+            Timber.d("User not define");
+            getActivity().onBackPressed();
         }
         mMessageUserName.setText(name);
         mUserListRv.setAdapter(mMessageAdapter);
@@ -92,6 +96,7 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
     @Override
     public void onResume() {
         super.onResume();
+        compositeSubscription = new CompositeSubscription();
         compositeSubscription.add(MessagePublish.getInstance().getMessage()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<String>() {
@@ -112,6 +117,7 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
                     }
                 })
         );
+        observeTyping();
     }
 
     @Override
@@ -156,5 +162,30 @@ public class MessageListFragment extends BaseFragment implements MessageListMvpV
         Timber.d("addNewMessage: messageText = [%s]", messageText);
         mList.add(messageText);
         mMessageAdapter.notifyItemInserted(mList.size());
+    }
+
+    private void observeTyping() {
+        compositeSubscription.add(RxTextView.textChanges(mNewMessageEt)
+                .map(new Func1<CharSequence, String>() {
+                    @Override
+                    public String call(CharSequence charSequence) {
+                        return charSequence.toString();
+                    }
+                })
+                .debounce(3500, TimeUnit.MILLISECONDS)
+                .filter(new Func1<CharSequence, Boolean>() {
+                    @Override
+                    public Boolean call(CharSequence charSequence) {
+                        return charSequence.length() > 2;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String msg) {
+                        mPresenter.sendMessage(new ChatMessage(msg));
+                    }
+                })
+        );
     }
 }

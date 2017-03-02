@@ -23,6 +23,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func2;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Belichenko Anton on 13.02.17.
@@ -36,6 +37,7 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
     @BindView(R.id.login_email_et) EditText mLoginEmailEt;
     @BindView(R.id.login_pass_et) EditText mLoginPassEt;
     @BindView(R.id.login_login) Button mLoginSinging;
+    private CompositeSubscription compositeSubscription;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,7 +53,19 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
         ButterKnife.bind(this, view);
         mPresenter.attachView(this);
         mLoginSinging.setEnabled(false);
-        loginAdnPassword();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        compositeSubscription.unsubscribe();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        compositeSubscription = new CompositeSubscription();
+        observeLoginAdnPassword();
     }
 
     @Override
@@ -75,8 +89,8 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
         getActivity().finish();
     }
 
-    public void loginAdnPassword() {
-        Observable.combineLatest(RxTextView.textChanges(mLoginEmailEt),
+    public void observeLoginAdnPassword() {
+        compositeSubscription.add(Observable.combineLatest(RxTextView.textChanges(mLoginEmailEt),
                 RxTextView.textChanges(mLoginPassEt),
                 new Func2<CharSequence, CharSequence, Boolean>() {
                     @Override
@@ -84,11 +98,12 @@ public class EmailLoginFragment extends BaseFragment implements EmailLoginMvpVie
                         return email.length() > 0 && password.length() > 0;
                     }
                 }).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean enable) {
-                mLoginSinging.setEnabled(enable);
+                    @Override
+                    public void call(Boolean enable) {
+                        mLoginSinging.setEnabled(enable);
 
-            }
-        });
+                    }
+                })
+        );
     }
 }

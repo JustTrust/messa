@@ -39,7 +39,7 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         if (getIntent().getIntExtra(MAIN_START_FLAG, USER_LIST_FLAG) == USER_LIST_FLAG) {
-            new UserListFragment().show(getSupportFragmentManager());
+            new UserListFragment().show(getSupportFragmentManager(), false);
         }
     }
 

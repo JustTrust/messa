@@ -8,6 +8,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
+import rx.Observable;
 import timber.log.Timber;
 
 /**
@@ -66,6 +67,7 @@ public class MsgWebSocket extends WebSocketListener {
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
+        Observable.just(text);
         MessagePublish.getInstance().setMessage(text);
         Timber.d("onMessage: webSocket = [%s], text = [%s]", webSocket, text);
     }
